@@ -13,7 +13,6 @@ if six.PY3:
     from urllib.parse import quote_plus
 else:
     from urllib import quote_plus
-import urllib
 from flask import json
 
 
