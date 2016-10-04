@@ -1,9 +1,8 @@
-import tarfile
-from io import BytesIO
-import voeventparse
-import os
-
 import logging
+import tarfile
+import voeventparse
+from collections import namedtuple
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +19,8 @@ def bytestring_to_tar_tuple(filename, bytes):
             This can be passed directly to TarFile.addfile().
     """
     info = tarfile.TarInfo(filename)
-    info.size = len(bytes)
-    return info, BytesIO(bytes)
+    info.size = len(s)
+    return info, BytesIO(s)
 
 
 def filename_from_ivorn(ivorn):
@@ -109,6 +108,19 @@ def write_tarball_from_ivorn_xml_tuples(ivorn_xml_tuples, filepath):
     return packet_count
 
 
+class TarXML(namedtuple('TarXML', 'name xml')):
+    """
+    A namedtuple for pairing a filename and XML bytestring
+
+    Attributes:
+        name (str): Filename from the tarball
+        xml (builtins.bytes): Bytestring containing the raw XML data.
+    """
+    pass  # Just wrapping a namedtuple so we can assign a docstring.
+
+
+
+
 def tarfile_xml_generator(fname):
     """
     Generator for iterating through xml files in a tarball.
@@ -130,8 +142,7 @@ def tarfile_xml_generator(fname):
         while tarinf is not None:
             if tarinf.isfile() and tarinf.name[-4:] == '.xml':
                 fbuf = tf.extractfile(tarinf)
-                tarinf.xml = fbuf.read()
-                yield tarinf
+                yield TarXML(name=tarinf.name, xml=fbuf.read())
             tarinf = tf.next()
             # Kludge around tarfile memory leak, cf
             # http://blogs.it.ox.ac.uk/inapickle/2011/06/20/high-memory-usage-when-using-pythons-tarfile-module/

@@ -45,11 +45,15 @@ def get_apiv1_rules():
 
 
 def error_to_dict(error):
+    # Py2 Exceptions always have .message, not so in Python 3
+    err_msg = getattr(error, 'message', None)
+    if err_msg is not None:
+        err_msg = err_msg.replace('\n', '').strip()
     return {
         'error': {
             'code': error.code,
             'description': error.description,
-            'message': error.message.replace('\n', '').strip()
+            'message': err_msg
         }
     }
 
@@ -123,7 +127,6 @@ def page_not_found(abort_error):
                                endpoints=[str(r) for r in get_apiv1_rules()],
                                ), abort_error.code
     else:
-
         return jsonify(error_to_dict(abort_error)), abort_error.code
 
 
@@ -170,7 +173,7 @@ class ListIvorn(ListQueryView):
         """
         raw_results = query.all()
         if len(raw_results):
-            return zip(*raw_results)[0]
+            return list(zip(*raw_results))[0]
         else:
             return raw_results
 
