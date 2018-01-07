@@ -11,8 +11,6 @@ services:
 
 language: python
 
-virtualenv:
-  system_site_packages: true
 
 matrix:
   include:
