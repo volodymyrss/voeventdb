@@ -43,26 +43,6 @@ def voevent_etree_to_ivorn_xml_tuple(voevent):
     return (voevent.attrib['ivorn'], voeventparse.dumps(voevent))
 
 
-def voevent_dbrow_to_ivorn_xml_tuple(voevent):
-    """
-    Args:
-        voevent (:class:`voeventdb.server.database.models.Voevent`): Voevent
-            model / data-tuple as retrieved from the database
-    """
-    # This is a horrible kludge, we should know whether the datatype is
-    # a bytestring or unicode string by design. (In practice, the uncertainty
-    # is only encountered during unit-tests, all real-world usage deals with
-    # the unicode case. But that means the tests didn't catch bugs!)
-    # It will do as a temporary fix, to allow data-dumps from the live
-    # database.
-    # Will soon port to Python3 with Postgres BYTEA storage and get things properly
-    # configured.
-    xml = voevent.xml
-    if isinstance(xml, six.string_types):
-        return (voevent.ivorn, voevent.xml.encode('utf-8'))
-    return (voevent.ivorn, voevent.xml)
-
-
 def write_tarball(voevents, filepath):
     """
     Iterate over voevent models / dbrows and write to bz'd tarball.
@@ -75,7 +55,7 @@ def write_tarball(voevents, filepath):
     Returns
         packet_count (int): Number of packets written to tarball
     """
-    tuple_gen = (voevent_dbrow_to_ivorn_xml_tuple(v) for v in voevents)
+    tuple_gen = ( (v.ivorn, v.xml) for v in voevents)
     return write_tarball_from_ivorn_xml_tuples(tuple_gen,
                                                filepath)
 
