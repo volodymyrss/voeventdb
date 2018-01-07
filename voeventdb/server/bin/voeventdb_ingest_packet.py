@@ -93,7 +93,7 @@ def main():
     if not db_utils.check_database_exists(dburl):
         raise RuntimeError("Database not found")
 
-    stdin = sys.stdin.read()
+    stdin = sys.stdin.buffer.read()
     v = voeventparse.loads(stdin)
 
     session = Session(bind=create_engine(dburl))

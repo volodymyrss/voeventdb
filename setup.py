@@ -9,7 +9,6 @@ import versioneer
 install_requires = [
     'click',
     'flask',
-    'future',
     'iso8601',
     'psycopg2',
     'pytz',

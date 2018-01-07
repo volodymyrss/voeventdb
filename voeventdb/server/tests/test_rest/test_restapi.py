@@ -221,10 +221,6 @@ class TestWithSimpleDatabase:
         url = url_for(apiv1.name + '.packet_xml')
         url += quote_plus(present_ivorn)
         rv = self.c.get(url)
-        print("HEaders,", rv.headers)
-        print("DATA", len(rv.data), rv.data.decode()[:10])
-        print("Present IVORN", len(present_ivorn_xml_content), present_ivorn_xml_content[:10])
-        assert False
         assert rv.status_code == 200
         assert rv.mimetype == 'text/xml'
         assert rv.data.decode() == present_ivorn_xml_content.decode()

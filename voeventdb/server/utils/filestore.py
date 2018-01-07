@@ -3,7 +3,7 @@ import tarfile
 import voeventparse
 from collections import namedtuple
 from io import BytesIO
-
+import six
 logger = logging.getLogger(__name__)
 
 
@@ -19,8 +19,8 @@ def bytestring_to_tar_tuple(filename, bytes):
             This can be passed directly to TarFile.addfile().
     """
     info = tarfile.TarInfo(filename)
-    info.size = len(s)
-    return info, BytesIO(s)
+    info.size = len(bytes)
+    return info, BytesIO(bytes)
 
 
 def filename_from_ivorn(ivorn):
@@ -58,7 +58,7 @@ def voevent_dbrow_to_ivorn_xml_tuple(voevent):
     # Will soon port to Python3 with Postgres BYTEA storage and get things properly
     # configured.
     xml = voevent.xml
-    if isinstance(xml, unicode):
+    if isinstance(xml, six.string_types):
         return (voevent.ivorn, voevent.xml.encode('utf-8'))
     return (voevent.ivorn, voevent.xml)
 
