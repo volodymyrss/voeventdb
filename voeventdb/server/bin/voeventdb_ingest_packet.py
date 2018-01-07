@@ -92,7 +92,7 @@ def main():
         stdin = sys.stdin.buffer.read()
     else:
         stdin = sys.stdin.read()  # Py2
-        
+
     v = voeventparse.loads(stdin)
 
     session = Session(bind=create_engine(dburl))

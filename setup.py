@@ -20,7 +20,6 @@ install_requires = [
 
 test_requires = [
     'pytest>3',
-    'tox',
 ]
 
 extras_require = {
